@@ -1,12 +1,12 @@
- package com.binh.bai2kethua;
+package com.binh.bai2kethua;
 
 import java.util.Scanner;
 
 public class QuanLySach {
-	private Sach[] danhSachCacLoaiSach;
-	private int n;
-	private int count;
-	private double tong;
+    private Sach[] danhSachCacLoaiSach;
+    private int n;
+    private int count;
+    private double tong;
 
     public double getTong() {
         return tong;
@@ -17,68 +17,70 @@ public class QuanLySach {
     }
 
     public int getCount() {
-		return count;
-	}
-	public void setCount(int count) {
-		this.count = count;
-	}
+        return count;
+    }
 
-	public int getN() {
-		return n;
-	}
+    public void setCount(int count) {
+        this.count = count;
+    }
 
-	public void setN(int n) {
-		this.n = n;
-	}
+    public int getN() {
+        return n;
+    }
 
-	public QuanLySach() {
-		danhSachCacLoaiSach = new Sach[100];
-		count = 0;
-	}
-	
-	public void themSach() {
-		System.out.println("lua chon nhap sach" +
-				"1: sach giao khoa" +
-				"2: sach tham khao");
-		this.n = new Scanner(System.in).nextInt();
-		System.out.println("so luong can nhap");
-		this.count = new Scanner(System.in).nextInt();
-		switch (this.n){
-			case 1:
-				for (int i = 0; i < count; i++) {
-					danhSachCacLoaiSach[i] = new SachGiaoKhoa();
-					danhSachCacLoaiSach[i].nhapSach();
-				}break;
-			case 2:
-				for (int i = 0; i < count; i++) {
-					danhSachCacLoaiSach[i] = new SachThamKhao();
-					danhSachCacLoaiSach[i].nhapSach();
-				}break;
-				default: break;
-		}
+    public void setN(int n) {
+        this.n = n;
+    }
 
-	}
+    public QuanLySach() {
+        danhSachCacLoaiSach = new Sach[100];
+        count = 0;
+    }
+
+    public void themSach() {
+        System.out.println("so luong can nhap");
+        this.count = new Scanner(System.in).nextInt();
+        for (int i = 0; i < count; i++) {
+            System.out.println("lua chon nhap sach" +
+                    "1: sach giao khoa" +
+                    "2: sach tham khao");
+            this.n = new Scanner(System.in).nextInt();
+            switch (this.n) {
+                case 1:
+                    danhSachCacLoaiSach[i] = new SachGiaoKhoa();
+                    danhSachCacLoaiSach[i].nhapSach();
+                    break;
+                case 2:
+                    danhSachCacLoaiSach[i] = new SachThamKhao();
+                    danhSachCacLoaiSach[i].nhapSach();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
 
 
-	public void xuatDanhSach(){
-		for (int i = 0; i < count; i++) {
-			danhSachCacLoaiSach[i].xuatSach();
-		}
-	}
+    public void xuatDanhSach() {
+        for (int i = 0; i < count; i++) {
+            danhSachCacLoaiSach[i].xuatSach();
+        }
+    }
 
-	public double tinnhTongThanhTienSachGiaoKhoa() {
-
+    public double tinhTongThanhTien() {
         for (int i = 0; i < count; i++) {
             this.tong += danhSachCacLoaiSach[i].thanhTien();
         }
         return this.tong;
-	}
-	
-	public boolean sachCanTim(){
-		for (int i = 0; i < count; i++) {
-			if (danhSachCacLoaiSach[i].getNhaXuatBan().equals("x")) {
-				danhSachCacLoaiSach[i].xuatSach();
-			}
-		}return false;
-	}
+    }
+
+    public boolean sachCanTim() {
+        for (int i = 0; i < count; i++) {
+            if (danhSachCacLoaiSach[i].getNhaXuatBan().equals("x")) {
+                danhSachCacLoaiSach[i].xuatSach();
+            }
+        }
+        return false;
+    }
 }

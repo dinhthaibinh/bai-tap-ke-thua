@@ -33,12 +33,17 @@ public class HangThucPham extends MatHangChung {
 		super();
 		this.nhaSanXuat = "";
 	}
-	
-	public HangThucPham(String nhaSX) {
-		super();
-		this.nhaSanXuat = nhaSX;
+
+	public HangThucPham(int maHang, String tenHang, long soLuong, long donGia, Date ngaySanXuat, Date ngayHetHan, String nhaSanXuat) {
+		super(maHang, tenHang, soLuong, donGia);
+		this.ngaySanXuat = ngaySanXuat;
+		this.ngayHetHan = ngayHetHan;
+		if (ngayHetHan.before(ngaySanXuat)){
+			this.ngayHetHan = ngaySanXuat;
+		}
+		this.nhaSanXuat = nhaSanXuat;
 	}
-	
+
 	@Override
 	public void nhap() {
 		super.nhap();
@@ -69,4 +74,8 @@ public class HangThucPham extends MatHangChung {
 		System.out.println("ngay san xuat: " + this.ngaySanXuat);
 		System.out.println("ngay het han: " + this.ngayHetHan);
 	}
+
+//	public boolean danhGia(Date ngayHetHan){
+//		return this.getSoLuongTon() > 3 ? KHO_BAN : BAN_DUOC ;
+//	}
 }

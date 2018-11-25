@@ -1,0 +1,256 @@
+use csdlhangkhong;
+
+select * from chuyenbay where GaDen = 'DAD';
+select * from maybay where TamBay > 10000;
+select * from nhanvien where Luong < 10000;
+select * from maybay where TamBay < 10000 and TamBay > 8000;
+select * from chuyenbay where GaDi = 'SGN' and GaDen = 'BMV';
+select * from chuyenbay where GaDi = 'SGN';
+select * from maybay where Loai like 'Boeing%';
+select sum(Luong) from nhanvien;
+select distinct * from chungnhan , maybay where Loai like 'Boeing%';
+select distinct * from chungnhan where MaMB = 747;
+select distinct MaMB, Ten from nhanvien, chungnhan where Ten like 'Nguyen%';
+select distinct MaNV from maybay , chungnhan where Loai like 'Boeing%';
+select distinct MaNV from maybay, chungnhan where Loai like 'Airbus%';
+select * from chungnhan as cn , (select MaNV from maybay, chungnhan where Loai like 'Boeing%') as t1,
+                 (select MaNV from maybay, chungnhan where Loai like 'Airbus%') as t2
+                  where t1.MaNV = t2.MaNV;
+select MaNV from chungnhan,
+     (
+     select * from maybay
+     where Loai LIKE 'Boeing%' or Loai LIKE 'Airbus%'
+     ) as l1
+      where l1.MaMB = chungnhan.MaMB
+      group by MaNV;
+#14
+select * from chuyenbay where DoDai < 4168;
+#12:
+              select l1.MaNV from
+                                        (select MaNV, Loai from chungnhan,
+                                                                (select *
+                                                                 from maybay where Loai LIKE 'Boeing%') as boeing
+                                         where boeing.MaMB = chungnhan.MaMB
+                                         group by MaNV) as l1
+                                          inner join
+                                            (select MaNV, boeing.MaMB from chungnhan,
+                                                                           (select *
+                                                                            from maybay where Loai LIKE 'Airbus%') as boeing
+                                             where boeing.MaMB = chungnhan.MaMB
+                                             group by MaNV) as l2
+                                            ON l1.MaNV = l2.MaNV;
+#13
+select Loai from chuyenbay,maybay where maybay.TamBay > chuyenbay.DoDai and chuyenbay.MaCB = 'VN280';
+#15
+select Ten from nhanvien, (select MaNV
+                           from chungnhan , (select * from maybay where maybay.Loai like 'Boeing%') as boeing
+                           where chungnhan.MaMB = boeing.MaMB group by MaNV) as t1
+where nhanvien.MaNV = t1.MaNV;
+
+#16
+select MaMB,(select count(MaNV) from chungnhan where chungnhan.MaMB = maybay.MaMB) tongsophicong
+from maybay;
+#17
+select * from chuyenbay as cb1, chuyenbay as cb2
+where cb1.GaDi = cb2.GaDen and cb1.GaDen = cb2.GaDi and cb1.MaCB != cb2.MaCB group by cb1.MaCB;
+#18
+select GaDi ,MaCB, count(MaCB) soluongchuyenbay
+from chuyenbay group by GaDi;
+#19
+select GaDi , sum(ChiPhi) chiphi
+from chuyenbay group by GaDi;
+#20
+select MaCB from chuyenbay where GioDi < '12:00';
+#21
+select MaNV from (
+                 select MaNV, count(MaMB) somaybaylaidc from chungnhan group by MaNV) as n1
+                  where n1.somaybaylaidc > 3 or n1.somaybaylaidc = 3 group by MaNV;
+
+#22
+select MaNV, (select max(TamBay) from (select MaNV, TamBay from (select phicong.MaNV,MaMB from chungnhan,(select *
+                                                                                                          from nhanvien
+                                                                                                          where (select count(*) from chungnhan where MaNV = nhanvien.MaNV) = 3) as phicong
+                                                                 where phicong.MaNV = chungnhan.MaNV) as l1, maybay
+                                       where maybay.MaMB=l1.MaMB) as tambaycaonhat where tambaycaonhat.MaNV = l2.MaNV)
+from (select MaNV
+      from nhanvien
+      where (select count(*) from chungnhan where MaNV = nhanvien.MaNV) = 3) as l2;
+#23
+select MaNV, count(MaMB) somaybaylaidc from chungnhan group by MaNV;
+#24
+select MaNV, max(l1.somaybaylaidc)
+from (select MaNV, count(MaMB) somaybaylaidc from chungnhan group by MaNV) as l1;
+#25
+select MaNV, count(MaMB) somaybaylaidc from chungnhan group by MaNV ;
+#26
+select nv.MaNV, Ten
+from (select nhanvien.MaNV,Ten, MaMB from nhanvien left join chungnhan c on nhanvien.MaNV = c.MaNV) as nv
+where nv.MaMB is null ;
+#27
+select MaNV , Luong from nhanvien order by Luong desc ;
+#28
+select sum(Luong) from nhanvien;
+#29
+select MaCB, l1.Loai
+from chuyenbay,(select * from maybay where Loai like 'Boeing%') as l1
+where l1.TamBay > chuyenbay.DoDai;
+#30
+select * from chuyenbay,maybay where maybay.TamBay>chuyenbay.DoDai and MaCB = 'VN254';
+#31
+select cb.MaCB, cn.MaNV
+from chuyenbay as cb,chungnhan as cn,(select * from maybay,chuyenbay where maybay.TamBay > chuyenbay.DoDai) as l1,
+     (select * from nhanvien where Luong > 100000) as l2
+where l1.MaMB = cn.MaMB and l2.MaNV = cn.MaNV group by cb.MaCB;
+#32
+select nv.MaNV from nhanvien as nv, chungnhan, (select * from (select * from maybay, chuyenbay
+                                                      where chuyenbay.DoDai < maybay.TamBay) as l1
+                                       where l1.GaDi = 'SGN' and l1.GaDen = 'BMV') as n1
+where n1.ChiPhi > nv.Luong group by nv.MaNV;
+#37
+select MaNV from (select tambay.MaNV, boeing.MaMB from
+                                                       (select MaNV, maybay.MaMB from chungnhan,maybay
+                                                        where maybay.MaMB = chungnhan.MaMB
+                                                          and maybay.TamBay > 4800
+                                                        group by MaNV) tambay left join
+                                                           (select MaNV, maybay.MaMB from chungnhan,maybay
+                                                            where maybay.MaMB = chungnhan.MaMB
+                                                              and Loai LIKE "Boeing%"
+                                                            group by MaNV) as boeing
+                                                           on boeing.MaMB = tambay.MaMB) as l1
+where l1.MaMB is null ;
+#38
+select Ten, l1.MaNV, l1.somaybay from nhanvien, (select MaNV, count(l1.MaMB) somaybay
+             from chungnhan, (select * from maybay where TamBay > 3200) as l1
+             where chungnhan.MaMB = l1.MaMB group by MaNV)as l1
+where l1.somaybay >= 3 and nhanvien.MaNV = l1.MaNV;
+
+#full out join , union, unionall
+#34
+select MaNV
+from nhanvien
+where Luong = (select max(luongcaothunhi.Luong)
+                from (select *
+                    from (select nhanvien.MaNV, nhanvien.Luong, luongcaonhat.Ten
+                        from nhanvien
+                            left join (select * from nhanvien
+                              where Luong = (select max(luong) from nhanvien)) as luongcaonhat
+                                on nhanvien.MaNV = luongcaonhat.MaNV) as luongcaonhat2
+where luongcaonhat2.Ten is null) as luongcaothunhi)
+or Luong = (select max(luong) from nhanvien);
+#39
+select Ten, l1.MaNV, l1.somaybay from nhanvien, (select MaNV, count(l1.MaMB) somaybay
+                                                 from chungnhan, (select * from maybay) as l1
+                                                 where chungnhan.MaMB = l1.MaMB group by MaNV)as l1
+where nhanvien.MaNV = l1.MaNV;
+#40
+select Ten, l1.MaNV, l1.somaybay
+from nhanvien, (select MaNV, count(l1.MaMB) somaybay
+                from chungnhan, (select * from maybay) as l1
+                where chungnhan.MaMB = l1.MaMB and l1.Loai like 'Boeing%' group by MaNV)as l1
+where nhanvien.MaNV = l1.MaNV;
+
+select nhanvien.MaNV, Ten, count(maybay.MaMB) from nhanvien, chungnhan, maybay
+where maybay.MaMB = chungnhan.MaMB
+  and Loai LIKE "Boeing%"
+  and nhanvien.MaNV = chungnhan.MaNV
+group by nhanvien.MaNV;
+#41
+select Loai, count(MaNV)
+from maybay, chungnhan
+where maybay.MaMB = chungnhan.MaMB group by maybay.MaMB;
+
+
+#42
+select mb.Loai, count(l1.MaCB)
+from maybay as mb, (select * from maybay, chuyenbay
+                    where maybay.TamBay < chuyenbay.DoDai) as l1
+where mb.MaMB = l1.MaMB group by mb.Loai;
+
+#43
+select * from nhanvien, chungnhan
+where chungnhan.MaNV = nhanvien.MaNV
+and nhanvien.Luong > 100000;
+
+select Loai, count(l1.MaNV)
+from maybay,(select MaMB, cn.MaNV from nhanvien as nv, chungnhan as cn
+                           where cn.MaNV = nv.MaNV
+                             and nv.Luong > 100000 ) as l1
+where l1.MaMB = maybay.MaMB group by Loai;
+
+#44
+select * from maybay where TamBay > 3200;
+select * from chungnhan , nhanvien where chungnhan.MaNV = nhanvien.MaNV group by chungnhan.MaNV;
+
+select Loai, MaNV
+from (select * from maybay where TamBay > 3200) as l1,chungnhan
+where l1.MaMB = chungnhan.MaMB;
+
+select Luong from nhanvien, (select Loai, MaNV
+                             from (select * from maybay where TamBay > 3200) as l1,chungnhan
+                             where l1.MaMB = chungnhan.MaMB) as a1
+where nhanvien.MaNV = a1.MaNV;
+
+select MaNV,phicong.MaMB,ltb,TamBay
+from MAYBAY,(select avg(Luong) as ltb,NHANVIEN.MaNV,chungnhan.MaMB
+             from NHANVIEN,chungnhan
+             where NHANVIEN.MaNV=chungnhan.MaNV
+             group by NHANVIEN.MaNV) as phicong
+where MAYBAY.MaMB=phicong.MaMB
+having TamBay>3200 and ltb >99890;
+
+#47
+select MaNV, Ten, count(MaCB)
+from chuyenbay,
+     (select MaNV, Ten, max(TamBay) as tambaymax
+      from maybay,
+           (select Ten, nhanvien.MaNV, MaMB
+            FROM chungnhan,
+                 nhanvien
+            where chungnhan.MaNV = nhanvien.MaNV) phicong
+      where maybay.MaMB = phicong.MaMB
+      GROUP BY MaNV) as l1
+where DoDai < l1.tambaymax
+  and chuyenbay.GaDi = 'SGN'
+GROUP BY MaNV;
+
+#48
+select MaNV, Ten, count(MaCB)
+from chuyenbay,
+     (select MaNV, Ten, max(TamBay) as tambaymax
+      from maybay,
+           (select Ten, nhanvien.MaNV, MaMB
+            FROM chungnhan,
+                nhanvien
+            where chungnhan.MaNV = nhanvien.MaNV) phicong
+      where maybay.MaMB = phicong.MaMB
+      GROUP BY MaNV) as l1
+where DoDai > l1.tambaymax
+  and chuyenbay.GaDi = 'SGN'
+GROUP BY MaNV;
+
+#51
+select MaCB, count(Loai) from chuyenbay, maybay
+where chuyenbay.DoDai > maybay.TamBay group by MaCB;
+
+#52
+select MaCB, count(Loai) from chuyenbay, maybay
+where chuyenbay.DoDai < maybay.TamBay group by MaCB;
+
+#53
+select MaCB, count(MaNV)
+from chuyenbay, (select MaNV , max(TamBay) as max
+                 from chungnhan, maybay
+                 where chungnhan.MaMB = maybay.MaMB group by MaNV) as tambay
+where chuyenbay.DoDai > tambay.max group by MaCB;
+
+#55
+select MaCB from chuyenbay
+where GaDi ='HAN' and GaDen ='CXR' and GioDen > '16:00';
+
+#56
+select Loai, l1.MaNV, Ten from maybay, (select chungnhan.MaNV, Ten, MaMB from nhanvien, chungnhan
+                          where chungnhan.MaNV = nhanvien.MaNV and Luong > 200000 group by chungnhan.MaNV) as l1
+where l1.MaMB = maybay.MaMB;
+
+
+
